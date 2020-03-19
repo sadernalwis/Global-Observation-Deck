@@ -1,1 +1,2 @@
-# Global-Observation-Deck
+# Global Observation Deck MVP
+
