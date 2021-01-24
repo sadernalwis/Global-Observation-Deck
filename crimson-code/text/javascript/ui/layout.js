@@ -237,7 +237,7 @@ export let Layout = {
 
 
         let line = {};
-        Line.query({ male: "", female: "", symptoms: ["nausea", "headache", "running nose", "IBS", "shiver"] }, null, line);
+        // Line.query({ male: "", female: "", symptoms: ["nausea", "headache", "running nose", "IBS", "shiver"] }, null, line);
 
 
         let children = [];
