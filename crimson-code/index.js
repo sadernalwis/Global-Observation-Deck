@@ -17,10 +17,11 @@ app.use(expressip().getIpInfoMiddleware);
 
 // const hostname = '173.82.173.9';
 // const xyztem = "/ruby/xyztem/net";
-const hostname = '192.168.1.7';
+const hostname = '192.168.8.105';
 // const hostname = '192.168.43.103';
 // const hostname = 'localhost';
-const xyztem = "/home/sadern/Documents/ruby";
+const xyztem = "/home/crimson/RubyOS/web/Global-Observation-Deck/crimson-code";
+// const xyztem = "";
 const port = 443;
 
 
@@ -142,6 +143,7 @@ app.use((req, res) => {
         res.write('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
 
         res.write(`<link href="https://${hostname}:${port}/text/css/main.css" rel="stylesheet" type="text/css" />`);
+        res.write(`<link href="https://${hostname}:${port}/text/css/boot_screen.css" rel="stylesheet" type="text/css" />`);
 
 
         res.write(`<script type="module" src="https://${hostname}:${port}/text/javascript/ui/ui.js"></script>`);

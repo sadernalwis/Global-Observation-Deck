@@ -2,24 +2,23 @@ import * as THREE from '../javascript/threejs/build/three.module.js';
 import { GLTFLoader } from '../javascript/threejs/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls, MapControls } from '../javascript/threejs/examples/jsm/controls/OrbitControls.js';
 import { SkeletonUtils } from '../javascript/threejs/examples/jsm/utils/SkeletonUtils.js';
+import { TWEEN } from '../javascript/threejs/examples/jsm/libs/tween.module.min.js';
+import { TrackballControls } from '../javascript/threejs/examples/jsm/controls/TrackballControls.js';
+import { CSS3DRenderer, CSS3DObject } from '../javascript/threejs/examples/jsm/renderers/CSS3DRenderer.js';
 import { Ui } from '../javascript/ui/ui.js';
 import { Utility } from '../javascript/utility/utility.js';
-import { Babylon } from '../javascript/modules/babylon.js';
+import { CSS} from '../javascript/module/periodic-table.js';
 
+// import { Babylon } from '../javascript/modules/babylon.js';
 function proxy(context, method, message) {
     return function() {
         message = [message].concat(Array.prototype.slice.apply(arguments));
         alert(message);
-        method.apply(context, message);
-    }
-}
-
+        method.apply(context, message);}}
 //console.log = proxy(console, console.log, 'Log:');
 console.error = proxy(console, console.error, 'Error:');
 //console.warn = proxy(console, console.warn, 'Warning:');
-
 let processor = {
-
     doLoad: function(video) {
         this.video = video;
         this.c1 = document.getElementById("c1");
@@ -32,51 +31,33 @@ let processor = {
             self.height = self.video.videoHeight;
             self.c1.width = self.c2.width = self.width;
             self.c1.height = self.c2.height = self.height;
-            self.timerCallback();
-        }, false);
-    },
+            self.timerCallback();}, false);},
     timerCallback: function() {
-        if (this.video.paused || this.video.ended) {
-            return;
-        }
+        if (this.video.paused || this.video.ended) {return;}
         this.computeFrame();
         let self = this;
-        setTimeout(function() {
-            self.timerCallback();
-        }, 0);
-    },
+        setTimeout(function() {self.timerCallback();}, 0);},
     computeFrame: function() {
         //        this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);
         //        let frame = this.ctx1.getImageData(0, 0, this.width, this.height);
         //        let l = frame.data.length / 4;
-        //
         //        for (let i = 0; i < l; i++) {
         //            let r = frame.data[i * 4 + 0];
         //            let g = frame.data[i * 4 + 1];
         //            let b = frame.data[i * 4 + 2];
         //            if (g > 100 && r > 100 && b < 43)
-        //                frame.data[i * 4 + 3] = 0;
-        //        }
+        //                frame.data[i * 4 + 3] = 0;}
         //        this.ctx2.putImageData(frame, 0, 0);
         this.ctx2.drawImage(this.video, 0, 0, this.width, this.height);
         this.decode(this.c2, this.ctx2);
-        return;
-    },
+        return;},
     TEST_NUMERIC: /^\d+$/,
     TEST_ALPHANUMERIC: /^[0-9A-Z$%*+-./: ]+$/,
     chooseBestModeData: function(data) {
-        if (processor.TEST_NUMERIC.test(data)) {
-            return new QRCode.QRNumeric(data);
-        } else if (processor.TEST_ALPHANUMERIC.test(data)) {
-            return new QRCode.QRAlphanumeric(data);
-        }
-
-        try {
-            return new QRCode.QRKanji(data);
-        } catch (error) {
-            return new QRCode.QRByte(data);
-        }
-    },
+        if (processor.TEST_NUMERIC.test(data)) {return new QRCode.QRNumeric(data);} 
+        else if (processor.TEST_ALPHANUMERIC.test(data)) {return new QRCode.QRAlphanumeric(data);}
+        try {return new QRCode.QRKanji(data);} 
+        catch (error) {return new QRCode.QRByte(data);}},
     encode: function(input) {
         let parameters = {
             input: [input],
@@ -85,8 +66,7 @@ let processor = {
             mode: ["Auto", "QRByte", "QRAlphanumeric", "QRNumeric", "QRKanji"],
             moduleSize: [3, 4, 5, 6, 7, 8, 9, 10, 1, 2],
             margin: [10, 15, 20, 25, 30, 35, 40, 5],
-            output: []
-        };
+            output: []};
         var data = parameters.input[0];
         var ecLevel = parameters.ecLevel[0];
         var hasEncodingHint = parameters.hasEncodingHint[0];
@@ -95,11 +75,8 @@ let processor = {
         var margin = parameters.margin[0];
         if (!data) {
             //output.addClass('hide');
-            return console.error('encode-data empty.');
-        } else {
-            console.log('procedding with encode-data.');
-        }
-
+            return console.error('encode-data empty.');}
+        else {console.log('procedding with encode-data.');}
         var qrcode = new QRCode.Encoder();
         var errorCorrectionLevel = QRCode.ErrorCorrectionLevel[ecLevel];
         qrcode.setEncodingHint(hasEncodingHint).setErrorCorrectionLevel(errorCorrectionLevel);
@@ -107,21 +84,16 @@ let processor = {
             var data = mode === 'Auto' ? processor.chooseBestModeData(data) : new QRCode[mode](data);
             qrcode.write(data).make();
             const dataURL = qrcode.toDataURL(moduleSize, margin);
-
-
             var image = new Image();
             image.onload = function() {
                 //Ui.ctx2.drawImage(image, 0, 0);
             };
             image.src = dataURL;
             //            output.removeClass('hide');
-
-            return qrcode.toDataURL(moduleSize, margin);
-        } catch (error) {
+            return qrcode.toDataURL(moduleSize, margin);} 
+        catch (error) {
             //            output.addClass('hide');
-            console.error(error);
-        }
-
+            console.error(error);}
     },
     decode: function(canvas, context) {
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -132,14 +104,9 @@ let processor = {
             this.markQRCodeArea(context, result.location, result.version);
             //console && console.log(result.data);
             var decodedData;
-            try {
-                decodedData = JSON.parse(result.data)
-            } catch (error) {
-                return;
-            }
-            form.checkin(decodedData);
-        }
-
+            try {decodedData = JSON.parse(result.data)} 
+            catch (error) {return;}
+            form.checkin(decodedData);}
     },
     markQRCodeArea: function(context, location, version) {
         context.lineWidth = 2;
@@ -154,22 +121,19 @@ let processor = {
         var moduleSize = this.getModuleSize(location, version);
         this.markFinderPattern(context, location.topLeftFinder.x, location.topLeftFinder.y, moduleSize);
         this.markFinderPattern(context, location.topRightFinder.x, location.topRightFinder.y, moduleSize);
-        this.markFinderPattern(context, location.bottomLeftFinder.x, location.bottomLeftFinder.y, moduleSize);
-    },
+        this.markFinderPattern(context, location.bottomLeftFinder.x, location.bottomLeftFinder.y, moduleSize);},
     getModuleSize: function(location, version) {
         var topLeft = location.topLeft;
         var topRight = location.topRight;
         var a = Math.abs(topRight.x - topLeft.x);
         var b = Math.abs(topRight.y - topLeft.y);
         var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-        return c / (version * 4 + 17);
-    },
+        return c / (version * 4 + 17);},
     markFinderPattern: function(context, x, y, moduleSize) {
         context.fillStyle = '#00ff00';
         context.beginPath();
         context.arc(x, y, moduleSize * 0.75, 0, 2 * Math.PI);
-        context.fill();
-    }
+        context.fill();}
 };
 let device = {
     facingMode: ['user', 'environment', 'none'],
@@ -178,30 +142,19 @@ let device = {
         if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
             //device.facingMode.unshift(device.facingMode.pop());
             //self.constraints = {video: {facingMode: device.facingMode[0]}};
-            self.constraints = {
-                video: {
-                    facingMode: { exact: "user" }
-                }
-            };
-            const stream = await navigator.mediaDevices.getUserMedia(self.constraints).then(
-                function(stream) {
-                    self.video = document.getElementById("video_camera");
-                    track = stream.getTracks()[0];
-                    self.video.srcObject = stream;
-                    self.video.innerHTML = "streaming";
-                    processor.doLoad(self.video);
-                }).catch(
-                function(error) {
-                    console.error(error);
-                });
+            self.constraints = {video: {facingMode: { exact: "user" }}};
+            const stream = await navigator.mediaDevices.getUserMedia(self.constraints).
+                then(function(stream) {self.video = document.getElementById("video_camera");
+                        track = stream.getTracks()[0];
+                        self.video.srcObject = stream;
+                        self.video.innerHTML = "streaming";
+                        processor.doLoad(self.video);}).
+                catch(function(error) {console.error(error);});
         }
     },
     currentStream: null,
     stopMediaTracks: (stream) => {
-        stream.getTracks().forEach(track => {
-            track.stop();
-        });
-    },
+        stream.getTracks().forEach(track => {track.stop();});},
     getDevices: (mediaDevices) => {
         let count = 1;
         device.cameras = [];
@@ -209,70 +162,53 @@ let device = {
             if (mediaDevice.kind === 'videoinput') {
                 const camera = {
                     id: mediaDevice.deviceId,
-                    label: mediaDevice.label || `Camera ${count++}`
-                };
-                device.cameras.push(camera);
-            }
+                    label: mediaDevice.label || `Camera ${count++}`};
+                device.cameras.push(camera);}
         });
     },
     cameras: null,
     videoConstraints: {},
     start_camera: () => {
-        if (device.currentStream) {
-            device.stopMediaTracks(device.currentStream);
-        }
+        if (device.currentStream) {device.stopMediaTracks(device.currentStream);}
         device.facingMode.unshift(device.facingMode.pop());
-        if (device.facingMode[0] === 'none') {
-            return;
-        }
+        if (device.facingMode[0] === 'none') {return;}
         device.videoConstraints.facingMode = device.facingMode[0];
         const constraints = {
             video: device.videoConstraints,
-            audio: false
-        };
-        navigator.mediaDevices
-            .getUserMedia(constraints)
-            .then(stream => {
+            audio: false};
+        navigator.mediaDevices.getUserMedia(constraints).
+            then(stream => {
                 const video = document.getElementById("video_camera");
                 device.currentStream = stream;
                 video.srcObject = stream;
                 processor.doLoad(video);
-                return navigator.mediaDevices.enumerateDevices();
-            })
-            .then(device.getDevices)
-            .catch(error => {
-                console.error(error);
-            });
+                return navigator.mediaDevices.enumerateDevices();}).
+            then(device.getDevices).
+            catch(error => {console.error(error);});
     },
 };
-
 let world = {
     create: function() {
         world.scene = new THREE.Scene();
         world.scene.background = new THREE.Color(0xffffff);
         //world.scene.fog = new THREE.Fog(0xa0a0a0, 10, 50);
-
-        world.cameras = [new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 10)];
+        // world.cameras = [new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 10)];
+        world.cameras = [new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 )];
+        world.cameras[0].z = 3000;
         //world.cameras[0].position.set(0.0, 0.0, -0.02);
         // world.cameras[0].position.set(0.2050682233931717, 1.1663507799900064, -0.48179537459518473);
         // world.cameras[0].rotation.set(-1.570797326764811, -7.75694065707419e-9, -3.1338356351402967);
         //world.cameras[0].lookAt(0, 1, 0);
-
         world.clock = new THREE.Clock();
-
-
         world.ground = new THREE.Mesh(
             new THREE.PlaneBufferGeometry(40, 40),
             new THREE.MeshPhongMaterial({
                 color: 0x999999,
-                depthWrite: false
-            }));
+                depthWrite: false}));
         world.ground.rotation.x = -Math.PI / 2;
         world.ground.receiveShadow = true;
-
         world.illumination = new THREE.HemisphereLight(0xffffff, 0x444444);
         world.illumination.position.set(0, 20, 0);
-
         world.key_light = new THREE.DirectionalLight(0xffffff);
         world.key_light.position.set(-3, 10, -10);
         world.key_light.castShadow = true;
@@ -282,11 +218,9 @@ let world = {
         world.key_light.shadow.camera.right = 2;
         world.key_light.shadow.camera.near = 0.1;
         world.key_light.shadow.camera.far = 40;
-
         world.scene.add(world.illumination);
         world.scene.add(world.key_light);
         world.scene.add(world.ground);
-
         world.renderer = new THREE.WebGLRenderer({ antialias: true });
         world.renderer.setPixelRatio(window.devicePixelRatio);
         world.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -294,10 +228,8 @@ let world = {
         world.renderer.gammaFactor = 2.2;
         world.renderer.shadowMap.enabled = true;
         world.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
         world.ui = Ui;
         world.ui.initialize();
-
         document.body.prepend(world.renderer.domElement);
         window.addEventListener('resize',
             function() {
@@ -308,12 +240,10 @@ let world = {
                 world.renderer.setSize(window.innerWidth, window.innerHeight);
                 world.ui.resize();
             }, false);
-
         world.models = Models;
         Models.Parameters = [];
         Models.Assets = new Map();
         Models.Clones = new Map();
-
         world.controls = new MapControls(world.cameras[0], world.renderer.domElement);
         world.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
         world.controls.dampingFactor = 0.05;
@@ -321,61 +251,39 @@ let world = {
         world.controls.minDistance = 1;
         world.controls.maxDistance = 10;
         world.controls.maxPolarAngle = Math.PI / 2;
-
         world.script = script;
         world.sensors = Sensors;
         world.Keyboard = Keyboard;
-        world.gamepad = Gamepad;
-
-    },
-
+        world.gamepad = Gamepad;},
     render: function() {
         var cloneUpdateDelta = world.clock.getDelta();
-        Models.Clones.forEach(function(clone) {
-            clone.mixer.update(cloneUpdateDelta);
-        });
+        Models.Clones.forEach(function(clone) {clone.mixer.update(cloneUpdateDelta);});
         world.controls.update();
         world.renderer.render(world.scene, world.cameras[0]);
-        world.ui.draw();
-    }
+        world.ui.draw();}
 };
-
-
-
-
 let Models = {
-
     queue: function(parameter) {
-
         console.log("queue called with" + parameter);
         if (!parameter) {
             parameter = Models.Parameters.pop();
-            if (parameter) {
-                Models.queue(parameter);
-            } else {
-
+            if (parameter) {Models.queue(parameter);} 
+            else {
                 let loader = new THREE.FileLoader();
                 loader.setResponseType("json");
-
                 var url = Sensors.get_matrix();
                 url.e = hash;
                 url = Utility.url_encode(url);
-
                 loader.load(`${location.origin}/map/?${url}`,
-                    // onLoad callback
-                    function(json) {
+                    function(json) {// onLoad callback
                         json = JSON.parse(json);
                         if (json) {
-                            json.forEach(function(element, index) {
-                                Models.Parameters.push(element);
-                            });
+                            json.forEach(function(element, index) {Models.Parameters.push(element);});
                             //Models.queue();
-                        } else {
-                            console.log("no server data.")
-                        }
+                        } 
+                        else {console.log("no server data.");}
                     },
-                    // onProgress callback
-                    function(xhr) {
+                    function(xhr) {// onProgress callback
                         //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
                     },
                     // onError callback
@@ -389,49 +297,40 @@ let Models = {
         }
         var model_key = parameter.asset_name + "." + parameter.mesh_Name;
         var clone_key = parameter.e;
-
         if (Models.Assets.has(model_key)) {
             console.log("model key found");
-
             if (Models.Clones.has(clone_key)) {
                 console.log("clone key found. parameterizing.");
-
                 var clone = Models.Clones.get(clone_key);
                 // clone.scene.position.set(
                 //     (parameter.lx) ? parameter.lx / 10 : 0,
                 //     (parameter.ly) ? parameter.ly / 10 : 0,
-                //     (parameter.lz) ? parameter.lz / 10 : 0
-                // );
+                //     (parameter.lz) ? parameter.lz / 10 : 0);
                 // // clone.scene.position.x = clone_key.split('.')[3];
                 // clone.scene.position.x += parameter.ax * 10;
                 // clone.scene.position.y += parameter.ay * 10;
                 // clone.scene.position.z += parameter.az * 10;
-
                 clone.scene.scale.set(1.0, 1.0, 1.0);
                 world.cameras[0].position.set(clone.scene.position.x, clone.scene.position.y + 1.0, clone.scene.position.z);
                 world.cameras[0].lookAt(clone.scene.position.x, clone.scene.position.y, clone.scene.position.z);
                 //     clone.scene.scale.set(
                 //     (parameter.sx) ? parameter.sx : 1,
                 //     (parameter.sy) ? parameter.sy : 1,
-                //     (parameter.sz) ? parameter.sz : 1
-                // );
+                //     (parameter.sz) ? parameter.sz : 1);
                 // clone.scene.rotation.set(
                 //     (parameter.ta) ? (parameter.ta * (Math.PI / 180)) : 0,
                 //     (parameter.tb) ? (parameter.tb * (Math.PI / 180)) : 0,
-                //     (parameter.tg) ? (parameter.tg * (Math.PI / 180)) : 0
-                // );
+                //     (parameter.tg) ? (parameter.tg * (Math.PI / 180)) : 0);
                 // clone.scene.rotation.set(
                 //     (parameter.ta) ? 0 : 0,
                 //     (parameter.tb) ? (180 * (Math.PI / 180)) : 0,
-                //     (parameter.tg) ? 0 : 0
-                // );
+                //     (parameter.tg) ? 0 : 0);
                 Models.parameterized = true;
                 Sensors.map.set(clone_key, parameter);
                 //Models.queue(Models.Parameters.pop());
-
-            } else {
+            } 
+            else {
                 console.log("clone key not found. creating clone");
-
                 var model = Models.Assets.get(model_key);
                 if (model) {
                     var clone_scene = SkeletonUtils.clone(model.scene);
@@ -442,16 +341,10 @@ let Models = {
                             function(animation) {
                                 var action = mixer.clipAction(animation);
                                 action.play();
-                                action_map.set(animation.name, action);
-                            }
-                        );
-
+                                action_map.set(animation.name, action);});
                         clone_scene.traverse(
                             function(object) {
-                                if (object.isMesh) {
-                                    object.castShadow = true;
-                                }
-                            }
+                                if (object.isMesh) {object.castShadow = true;}}
                         );
                         var clone = {
                             scene: clone_scene,
@@ -512,8 +405,6 @@ let Models = {
 
     }
 };
-
-
 let Sensors = {
     map: new Map(),
     get_matrix: function() {
@@ -626,7 +517,6 @@ let Sensors = {
         };
     }
 };
-
 let Keyboard = {
 
     keydown: function(e) {
@@ -673,7 +563,6 @@ let Keyboard = {
         }
     }
 }
-
 let Gamepad = {
     connect: function() {
         var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
@@ -730,7 +619,6 @@ let Gamepad = {
     }
 
 };
-
 world.uploadObj = () => {
     let obj =
         'o' +
@@ -756,16 +644,13 @@ world.uploadObj = () => {
         return response.blob();
     });
 };
-
-
-
 var script = {
     onload: function() {
         //device.start_camera();
         //document.getElementById("c2").addEventListener("click", device.start_camera);
         //Ui.initialize();
         world.create();
-        Babylon.create(document.getElementById("c3"));
+        // Babylon.create(document.getElementById("c3"));
         script.loop_count = 0;
         script.loop();
         Sensors.start_sensors();
@@ -778,7 +663,6 @@ var script = {
         window.addEventListener("gamepadconnected", Gamepad.connected);
         window.addEventListener("gamepaddisconnected", Gamepad.disconnected);
         Credentials.get_all();
-
     },
     loop: function() {
         script.loop_count++;
@@ -786,6 +670,8 @@ var script = {
         requestAnimationFrame(script.loop);
         if (loop % 1 === 0) {
             world.render();
+
+            TWEEN.update();
         }
         if (loop % 2 === 0) {
             Gamepad.update();
@@ -799,6 +685,9 @@ var script = {
         }
         if (loop % 60 === 0) {
             Gamepad.connect();
+        }
+        if (loop % 200 === 0) {
+            
         }
 
 
@@ -902,15 +791,12 @@ let Microphone = {
         Microphone.audio_tracks.push(audio_track);
     }
 };
-
-
 let Console = {
     lines: [],
     initialize: function() {
         return Console;
     }
 };
-
 let Setting = {
     shoulder: {
         left: function() {
@@ -926,8 +812,6 @@ let Setting = {
     }
 
 }
-
-
 window.addEventListener("load", script.onload, false);
 window.world = world;
 window.ui = Ui;
