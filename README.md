@@ -2,6 +2,8 @@
 
 #sadern here
 
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
  
 git commit
 
@@ -19,3 +21,4 @@ A shortcut command that immediately creates a commit with a passed commit messag
 
  
 git commit -am "commit message"
+
